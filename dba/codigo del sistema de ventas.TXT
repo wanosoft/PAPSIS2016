@@ -1,0 +1,143 @@
+create database sistemadeventa;
+use sistemadeventa;
+
+cREATE TABLE Acceso(
+    idusuario     VARCHAR(20)    NOT NULL,
+    Contraseña    VARCHAR(15)    NOT NULL,
+    CodigoEmpleado    CHAR(5)        NOT NULL,
+    constraint pk_ac PRIMARY KEY (idusuario),
+    constraint fk_empleado_ac  foreing KEY (CodigoEmpleado) references empleado(CodigoEmpleado));
+
+
+CREATE TABLE Caja(
+    Fecha            char (8) NOT NULL,
+    Entrada          DECIMAL(10, 2)    NOT NULL,
+    Ventas               DECIMAL(10, 2)    NOT NULL,
+    Reparaciones     DECIMAL(10, 2)    NOT NULL,
+    Compras          DECIMAL(10, 2)    NOT NULL,
+    totalEfectivo    DECIMAL(10, 2)    NOT NULL,
+    TotalVenta       DECIMAL(10, 2)    NOT NULL,
+ constraint pk_caja   PRIMARY KEY (Fecha));
+
+
+CREATE TABLE Cliente(
+    CodigocCliente    CHAR(5)        NOT NULL,
+    DNI               CHAR(8)        NOT NULL,
+    datos           VARCHAR(50)    NOT NULL,
+     Direccion         VARCHAR(50),
+
+  constraint pk_cliente  PRIMARY KEY (CodigocCliente));
+
+
+CREATE TABLE compra(
+    codigoCompra    INT               NOT NULL,
+    total           DECIMAL(10, 2)    NOT NULL,
+    fecha           DATE              NOT NULL,
+  constraint pk_compra  PRIMARY KEY (codigoCompra));
+
+
+
+CREATE TABLE Empleado(
+    CodigoEmpleado    CHAR(5)        NOT NULL,
+    DNI               CHAR(8)        NOT NULL,
+    Apellidos         VARCHAR(30)    NOT NULL,
+    Nombres           VARCHAR(30)    NOT NULL,
+    Direccion         VARCHAR(50)    NOT NULL,
+    email             VARCHAR(40),
+    telefono          CHAR(9),
+    estado            CHAR(1)        NOT NULL,
+    constraint pk_empleado  PRIMARY KEY (CodigoEmpleado),
+    constraint u_dni unique (dni));
+
+
+
+CREATE TABLE Marca_Producto(
+    codigoMarca              VARCHAR(5)    NOT NULL,
+    nombre              VARCHAR(15)    NOT NULL,
+    modelo             VARCHAR(20)    NOT NULL,
+    Caracteristicas    VARCHAR(50)    NOT NULL,
+  constraint pk_marca_modelo  PRIMARY KEY (codigoMarca));
+
+
+
+CREATE TABLE Servicios(
+    codigoServicio    CHAR(5)           NOT NULL,
+    observacion       VARCHAR(30)       NOT NULL,
+    costo             DECIMAL(10, 2)    NOT NULL,
+    fecha             varchar(8)              NOT NULL,
+  constraint pk_servicios  PRIMARY KEY (codigoServicio));
+
+
+
+
+CREATE TABLE Producto(
+    codigoProducto    CHAR(5)           NOT NULL,
+    codigoMarca             VARCHAR(5)       NOT NULL,
+
+    categoria         VARCHAR(20)       NOT NULL,
+    precioVenta       DECIMAL(10, 2)    NOT NULL,
+    operador          VARCHAR(10)       NOT NULL,
+    Stock             INT               NOT NULL,
+constraint pk_product  PRIMARY KEY (codigoProducto),
+constraint fk_marc_p foreign key  (codigoMarca) references Marca_Producto(codigoMarca));
+
+
+
+CREATE TABLE Factura(
+    codigoFactura     CHAR(6)           NOT NULL,
+    CodigocCliente    CHAR(5)           NOT NULL,
+    fecha             varchar(8)              NOT NULL,
+    IGV               DECIMAL(10, 2)    NOT NULL,
+    Subtotal          DECIMAL(10, 2)    NOT NULL,
+    total             DECIMAL(10, 2)    NOT NULL,
+ constraint pk_factura   PRIMARY KEY (codigoFactura),
+constraint fk_codc_f FOREIGN KEY (CodigocCliente) REFERENCES cliente(CodigocCliente));
+
+
+
+CREATE TABLE Detalle_compra(
+    codigoCompra    INT               NOT NULL,
+    codigoMarca     VARCHAR(5)       NOT NULL,
+    Precio          DECIMAL(10, 2)    NOT NULL,
+    Cantidad        INT               NOT NULL,
+    Importe         DECIMAL(10, 2)    NOT NULL,
+  constraint pk_det_com  PRIMARY KEY (codigoCompra, codigoMarca),
+   constraint fk_codc FOREIGN KEY (codigoCompra)REFERENCES compra(codigoCompra),
+   constraint fk_marc foreign key (codigoMarca) references Marca_Producto(codigoMarca));
+
+
+
+CREATE TABLE detalle_servicio(
+    codigoFactura     CHAR(6)           NOT NULL,
+    codigoServicio    CHAR(1)           NOT NULL,
+    precio            DECIMAL(10, 2)    NOT NULL,
+    cantidad          INT               NOT NULL,
+    Importe           DECIMAL(10, 2)    NOT NULL,
+  constraint pk_de_ser  PRIMARY KEY (codigoFactura, codigoServicio),
+  constraint fk_codf_s FOREIGN KEY (codigoFactura) REFERENCES factura(codigoFactura),
+  constraint fk_cods_s FOREIGN KEY (codigoServicio) REFERENCES servicios(codigoServicio));
+
+
+
+CREATE TABLE Detalle_Venta(
+    codigoFactura     CHAR(6)           NOT NULL,
+    codigoProducto    CHAR(5)           NOT NULL,
+    CodigoEmpleado    CHAR(5)           NOT NULL,
+    Precio            DECIMAL(10, 2)    NOT NULL,
+    cantidad          INT               NOT NULL,
+    Importe           DECIMAL(10, 2)    NOT NULL,
+   constraint pk_cf_cp PRIMARY KEY (codigoFactura, codigoProducto),
+  constraint fk_codf_dv FOREIGN KEY (codigoFactura) REFERENCES Factura(codigoFactura),
+  constraint fk_codp_dv FOREIGN KEY (codigoProducto) REFERENCES Producto(codigoProducto),
+  constraint fk_code_dv FOREIGN KEY (CodigoEmpleado) REFERENCES Empleado(CodigoEmpleado));
+
+
+
+SELECT * FROM detalle_venta d;
+
+
+
+
+
+
+
